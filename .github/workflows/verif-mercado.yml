@@ -1,0 +1,62 @@
+# Plantilla de CI para un proyecto Python con pruebas (pytest) y Dockerfile
+# Dónde va: en TU repositorio, en .github/workflows/ci.yml
+#   (si usas un proyecto del curso en tu fork: .github/workflows/<nombre-del-proyecto>.yml)
+# Cambia lo que dice CAMBIA. Si todavía no tienes pruebas con pytest, usa ci-docker.yml.
+
+name: Verificación · mercado-raices
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# CAMBIA: la carpeta donde está tu Dockerfile.
+#   "."                          si está en la raíz de tu repositorio
+#   "proyectos/mercado-raices"   si usas un proyecto del curso en tu fork
+defaults:
+  run:
+    working-directory: "proyectos/mercado-raices"
+
+env:
+  # CAMBIA: el puerto de tu aplicación dentro del contenedor (8080 o 5000)
+  PUERTO_APP: "8080"
+
+jobs:
+  pruebas:
+    name: Pruebas del código
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      # CAMBIA: la ruta de tu requirements.txt si no está en la raíz
+      - run: pip install -r requirements.txt pytest
+      - run: pytest -v
+
+  imagen:
+    name: Imagen y prueba de humo
+    needs: pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: docker build -t mi-proyecto:${{ github.sha }} .
+      - run: docker run -d -p 9000:${{ env.PUERTO_APP }} --name app mi-proyecto:${{ github.sha }}
+      - name: Esperar a que responda
+        run: |
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null http://localhost:9000/ && exit 0
+            sleep 1
+          done
+          exit 1
+      - name: "Prueba 1 · CAMBIA: escribe aquí tu frase"
+        run: |
+          # CAMBIA: la ruta y el texto que debe aparecer
+          curl -s http://localhost:9000/productos | tee respuesta.txt
+          grep -q "Papa criolla" respuesta.txt
+      - name: Logs del contenedor (si algo falló)
+        if: failure()
+        run: docker logs app

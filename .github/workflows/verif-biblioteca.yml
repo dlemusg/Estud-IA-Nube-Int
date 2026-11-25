@@ -1,0 +1,68 @@
+# Plantilla de CI para cualquier proyecto con Dockerfile (Python, Node, web estática, otros)
+# Dónde va: en TU repositorio, en .github/workflows/ci.yml
+#   (si usas un proyecto del curso en tu fork: .github/workflows/<nombre-del-proyecto>.yml)
+#   En GitHub: Add file → Create new file → escribe .github/workflows/ci.yml → pega esto
+#
+# Cambia lo que dice CAMBIA. Nada más.
+
+name: Verificación · biblioteca-barrio
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# CAMBIA: la carpeta donde está tu Dockerfile.
+#   "."                          si está en la raíz de tu repositorio
+#   "proyectos/mercado-raices"   si usas un proyecto del curso en tu fork
+defaults:
+  run:
+    working-directory: "proyectos/biblioteca-barrio"
+
+env:
+  # CAMBIA: el puerto en el que escucha tu aplicación DENTRO del contenedor
+  #         (8080 o 5000 en Python, 3000 en Node, 80 en un sitio estático)
+  PUERTO_APP: "80"
+
+jobs:
+  imagen:
+    name: Imagen y prueba de humo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v6
+
+      - name: Construir la imagen
+        run: docker build -t mi-proyecto:${{ github.sha }} .
+
+      - name: Encender el contenedor
+        run: docker run -d -p 9000:${{ env.PUERTO_APP }} --name app mi-proyecto:${{ github.sha }}
+
+      - name: Esperar a que responda
+        run: |
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null http://localhost:9000/ && exit 0
+            sleep 1
+          done
+          echo "La aplicación no respondió en 30 segundos"
+          exit 1
+
+      # Tu prueba 1 de la Clase 3: «Si hago ___, debo ver ___»
+      - name: "Prueba 1 · CAMBIA: escribe aquí tu frase"
+        run: |
+          # CAMBIA: la ruta que abres (después de localhost:9000)
+          curl -s http://localhost:9000/ | tee respuesta.txt
+          grep -q "Biblioteca La Esquina" respuesta.txt
+
+      # Tu prueba 2. Si todavía no la tienes, borra este paso completo.
+      - name: "Prueba 2 · CAMBIA: escribe aquí tu frase"
+        run: |
+          curl -s http://localhost:9000/libros.json | tee respuesta.txt
+          grep -q "Cien años de soledad" respuesta.txt
+
+      - name: Logs del contenedor (si algo falló)
+        if: failure()
+        run: docker logs app

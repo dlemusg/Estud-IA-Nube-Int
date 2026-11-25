@@ -1,0 +1,14 @@
+{
+  "name": "bici-barrio",
+  "version": "0.1.0",
+  "description": "BiciBarrio · API de préstamo de bicicletas comunitarias (caso ficticio del curso Estud-IA)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "5.3.0"
+  },
+  "license": "MIT"
+}

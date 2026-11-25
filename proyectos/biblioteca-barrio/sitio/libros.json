@@ -1,0 +1,11 @@
+{
+  "biblioteca": "Biblioteca La Esquina",
+  "libros": [
+    {"titulo": "Cien años de soledad", "autor": "Gabriel García Márquez", "disponible": true},
+    {"titulo": "La vorágine", "autor": "José Eustasio Rivera", "disponible": false},
+    {"titulo": "María", "autor": "Jorge Isaacs", "disponible": true},
+    {"titulo": "Delirio", "autor": "Laura Restrepo", "disponible": true},
+    {"titulo": "El olvido que seremos", "autor": "Héctor Abad Faciolince", "disponible": false},
+    {"titulo": "La virgen de los sicarios", "autor": "Fernando Vallejo", "disponible": true}
+  ]
+}

@@ -60,7 +60,7 @@ jobs:
       # Tu prueba 2. Si todavía no la tienes, borra este paso completo.
       - name: "Prueba 2 · CAMBIA: escribe aquí tu frase"
         run: |
-          curl -s -X POST http://localhost:9000/pedidos -H 'Content-Type: application/json' -d '{\"cliente\":\"Tienda\",\"items\":[{\"producto\":\"cebolla\",\"cantidad\":1}]}' | tee respuesta.txt
+          curl -s -X POST http://localhost:9000/pedidos -H 'Content-Type: application/json' -d '{"cliente":"Tienda","items":[{"producto":"cebolla","cantidad":1}]}' | tee respuesta.txt
           grep -q "Pedido mínimo" respuesta.txt
 
       - name: Logs del contenedor (si algo falló)

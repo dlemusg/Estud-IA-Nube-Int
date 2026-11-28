@@ -1,0 +1,12 @@
+Verificando http://localhost:8081
+P1 · El servicio está vivo e informa su versión
+  ✔ /salud → 200 {"estado":"ok","version":"1.0.0"}
+P2 · El servicio está listo: su base de datos responde
+  ✔ /listo → 200 {"base_de_datos":"sqlite","estado":"listo","version":"1.0.0"}
+P3 · Un ciudadano radica una solicitud y puede consultarla
+  ✔ POST /solicitudes → 201 (id b62819a4-84a7-44f2-80b5-5cc473472dd4)
+  ✔ GET /solicitudes/b62819a4-84a7-44f2-80b5-5cc473472dd4 → 200
+P4 · La regla del negocio se cumple: un documento vencido se rechaza
+  ✔ documento vencido → 422
+
+Resultado: 5 pasaron, 0 fallaron

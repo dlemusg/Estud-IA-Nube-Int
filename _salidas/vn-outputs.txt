@@ -1,0 +1,5 @@
+contenedor = "villa-nube-desarrollo"
+entorno = "desarrollo"
+imagen = "villa-nube:1.0.0"
+url = "http://localhost:8081"
+volumen = "villa-nube-desarrollo-datos"

@@ -1,0 +1,48 @@
+terraform_data.responsable: Refreshing state... [id=764d6b11-d712-deb1-9c42-533716b8e11d]
+local_file.bienvenida: Refreshing state... [id=1b4bd42ccbb7d4e21f5a38b6b039353646b0f484]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # local_file.bienvenida must be replaced
+-/+ resource "local_file" "bienvenida" {
+      ~ content              = <<-EOT # forces replacement
+          - Bienvenida a la API de Trámites de Villa Nube.
+          + Bienvenida a la API de Trámites de Villa Sol.
+        EOT
+      ~ content_base64sha256 = "CLbWovndjcXhcMulyrC3KiJ2/FWJtU+SsOsUFxJyREM=" -> (known after apply)
+      ~ content_base64sha512 = "nVsXf8Are6FLUInVJHWmvKE22A3MtfuR08SfemcjpCtCfGcx5dLpNPyoDtIbRAMS0lr1LujSAhaDfDlt+44llg==" -> (known after apply)
+      ~ content_md5          = "2d38f5bc5fe74258faaeb19cbbbc904c" -> (known after apply)
+      ~ content_sha1         = "1b4bd42ccbb7d4e21f5a38b6b039353646b0f484" -> (known after apply)
+      ~ content_sha256       = "08b6d6a2f9dd8dc5e170cba5cab0b72a2276fc5589b54f92b0eb141712724443" -> (known after apply)
+      ~ content_sha512       = "9d5b177fc02b7ba14b5089d52475a6bca136d80dccb5fb91d3c49f7a6723a42b427c6731e5d2e934fca80ed21b440312d25af52ee8d20216837c396dfb8e2596" -> (known after apply)
+      ~ id                   = "1b4bd42ccbb7d4e21f5a38b6b039353646b0f484" -> (known after apply)
+        # (3 unchanged attributes hidden)
+    }
+
+  # terraform_data.responsable will be updated in-place
+  ~ resource "terraform_data" "responsable" {
+        id     = "764d6b11-d712-deb1-9c42-533716b8e11d"
+      ~ input  = {
+          ~ ciudad = "Villa Nube" -> "Villa Sol"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - ciudad = "Villa Nube"
+          - equipo = "Plataforma"
+        } -> (known after apply)
+    }
+
+Plan: 1 to add, 1 to change, 1 to destroy.
+
+Changes to Outputs:
+  ~ responsable = "Plataforma" -> (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.

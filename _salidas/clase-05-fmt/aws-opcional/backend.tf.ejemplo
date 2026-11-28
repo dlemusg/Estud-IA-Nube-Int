@@ -1,0 +1,25 @@
+# ESTADO REMOTO (ejemplo para leer en clase; para usarlo, renombra a backend.tf)
+#
+# Por qué: en un equipo, el estado no puede vivir en el computador de una persona.
+# Se guarda en un bucket compartido y Terraform pone un BLOQUEO (archivo .tflock)
+# mientras alguien hace plan o apply, para que dos personas no cambien lo mismo a la vez.
+#
+# Desde Terraform 1.10 el bloqueo lo hace S3 solo (use_lockfile).
+# Antes se usaba una tabla de DynamoDB; esa forma está marcada como obsoleta.
+#
+# Requisitos: el bucket del estado YA debe existir (se crea una vez, aparte)
+# y debe tener versionado para poder recuperar un estado dañado.
+
+terraform {
+  backend "s3" {
+    bucket       = "CAMBIA-nombre-del-bucket-de-estados"
+    key          = "villa-nube/documentos/terraform.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
+
+# Después de crear backend.tf:  terraform init -migrate-state
+# Con workspaces, cada entorno queda en su propia ruta dentro del mismo bucket:
+#   env:/pruebas/villa-nube/documentos/terraform.tfstate

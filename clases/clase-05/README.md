@@ -8,6 +8,8 @@ En la Clase 3 encendiste Villa Nube con comandos escritos a mano: `docker build`
 
 Hoy la infraestructura se **describe en archivos**. Terraform lee esos archivos, te muestra un **plan** con lo que va a hacer antes de hacerlo, lo hace y recuerda lo que creó. El mismo código sirve para desarrollo y para pruebas, y se puede revisar como cualquier otro código.
 
+![Así trabaja Terraform: código, plan, apply, lo real y el estado](img/flujo.png)
+
 **Te llevas:** tu proyecto descrito en Terraform, un plan leído e interpretado, dos entornos (desarrollo y pruebas) creados con el mismo código, y tu primera decisión de arquitectura escrita (ADR).
 
 **Cómo vamos a trabajar.** Primero lo hace el profesor, luego lo haces con él y después en tu proyecto. Al final, la **Mesa del arquitecto**: una conversación sobre cuándo vale la pena todo esto y qué pasa cuando una IA escribe la infraestructura por ti. Si algo falla, copia en el chat el comando que escribiste y la primera línea que dice `Error`.
@@ -150,14 +152,7 @@ Qué pasó: describiste lo que querías, Terraform calculó la diferencia entre 
 
 *Individual, durante la explicación · 10 minutos.* Leer un plan es la habilidad más importante de hoy: es tu última oportunidad de detener un error antes de que pase.
 
-**Los símbolos**
-
-| Símbolo | En el plan dice | Qué significa | ¿Hay riesgo? |
-| --- | --- | --- | --- |
-| `+` | `will be created` | Crea algo nuevo | Bajo |
-| `~` | `will be updated in-place` | Cambia algo sin borrarlo | Bajo o medio |
-| `-/+` | `must be replaced` | **Lo borra y lo crea de nuevo** | Alto: puede cortar el servicio o perder datos |
-| `-` | `will be destroyed` | Lo borra | Alto |
+![Símbolos del plan y su riesgo](img/simbolos.png)
 
 La frase que más importa buscar: `# forces replacement`. Te dice **qué cambio** obliga a reemplazar.
 
@@ -233,6 +228,8 @@ curl http://localhost:8081/solicitudes/EL-ID
 
 *En equipo · 10 minutos.* Abre `ejercicios/completa-el-modulo/main.tf.plantilla` y completa cada `___` con una palabra del banco. Cada palabra se usa una vez.
 
+![Módulo servicio-web: entradas, recursos y salidas](img/modulo.png)
+
 **Banco de palabras:** `docker_image` · `docker_container` · `image_id` · `puerto_interno` · `puerto_externo` · `variables_app` · `entorno` · `build`
 
 ```hcl
@@ -270,6 +267,8 @@ resource "___" "app" {
 ## Ejercicio 6 · Un código, dos entornos y su memoria
 
 *Individual o en parejas · 15 minutos.*
+
+![Un código, dos entornos con workspaces](img/entornos.png)
 
 **Paso 1 · Crea el entorno de pruebas** con el mismo código, en otro workspace:
 

@@ -1,0 +1,107 @@
+name: Verificación · clase 5
+on:
+  push:
+    branches: [verificacion-clase-05]
+permissions:
+  contents: read
+jobs:
+  todo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "~1.17.0"
+          terraform_wrapper: false
+      - name: Preparar salida
+        run: mkdir -p /tmp/out && terraform version | tee /tmp/out/version.txt
+      - name: fmt
+        working-directory: clases/clase-05
+        run: |
+          terraform fmt -recursive -diff > /tmp/out/fmt.diff || true
+          cat /tmp/out/fmt.diff
+      - name: Hola Terraform
+        working-directory: clases/clase-05/01-hola-terraform
+        run: |
+          set -x
+          terraform init -input=false -no-color > /tmp/out/hola-0-init.txt
+          terraform plan -no-color > /tmp/out/hola-1-crear.txt
+          terraform apply -auto-approve -no-color > /tmp/out/hola-1b-apply.txt
+          cat salida/bienvenida.txt
+          terraform plan -no-color -var 'equipo=Datos' > /tmp/out/hola-2-actualizar.txt
+          terraform plan -no-color -var 'ciudad=Villa Sol' > /tmp/out/hola-3-reemplazar.txt
+          terraform state list > /tmp/out/hola-state-list.txt
+          terraform destroy -auto-approve -no-color > /tmp/out/hola-4-destroy.txt
+          cp .terraform.lock.hcl /tmp/out/hola.lock.hcl
+      - name: Villa Nube como código
+        working-directory: clases/clase-05/infra-local
+        run: |
+          set -x
+          P=proyectos/villa-nube.tfvars
+          terraform init -input=false -no-color > /tmp/out/vn-0-init.txt
+          terraform validate -no-color
+          terraform workspace new desarrollo
+          terraform plan -no-color -var-file=$P -var-file=entornos/desarrollo.tfvars > /tmp/out/vn-1-crear.txt
+          terraform apply -auto-approve -no-color -var-file=$P -var-file=entornos/desarrollo.tfvars > /tmp/out/vn-1b-apply.txt
+          URL=http://localhost:8081 bash ../../clase-04/villa-nube/scripts/verificar.sh | tee /tmp/out/vn-verificar-dev.txt
+          curl -s http://localhost:8081/salud | tee /tmp/out/vn-salud.txt
+          terraform plan -no-color -var-file=$P -var-file=entornos/desarrollo.tfvars > /tmp/out/vn-2-sin-cambios.txt
+          terraform plan -no-color -var-file=$P -var-file=entornos/desarrollo.tfvars -var 'variables_app={DIAS_VIGENCIA_DOCUMENTO="30"}' > /tmp/out/vn-3-reemplazar.txt
+          terraform plan -no-color -var-file=$P -var-file=entornos/desarrollo.tfvars -var 'version_app=1.1.0' > /tmp/out/vn-3b-version.txt
+          terraform plan -no-color -var-file=$P -var-file=entornos/pruebas.tfvars > /tmp/out/vn-5-guardia.txt 2>&1 || echo "falló como se esperaba" >> /tmp/out/vn-5-guardia.txt
+          terraform output -no-color > /tmp/out/vn-outputs.txt
+          cp terraform.tfstate.d/desarrollo/terraform.tfstate /tmp/out/estado-ejemplo.json
+          terraform workspace new pruebas
+          terraform apply -auto-approve -no-color -var-file=$P -var-file=entornos/pruebas.tfvars > /tmp/out/vn-pruebas-apply.txt
+          URL=http://localhost:8082 bash ../../clase-04/villa-nube/scripts/verificar.sh | tee /tmp/out/vn-verificar-pruebas.txt
+          docker ps --format 'table {{.Names}}\t{{.Ports}}\t{{.Status}}' | tee /tmp/out/docker-ps.txt
+          docker volume ls | tee /tmp/out/docker-volumes.txt
+          terraform workspace list | tee /tmp/out/workspaces.txt
+          terraform plan -destroy -no-color -var-file=$P -var-file=entornos/pruebas.tfvars > /tmp/out/vn-4-destruir.txt
+          terraform destroy -auto-approve -no-color -var-file=$P -var-file=entornos/pruebas.tfvars > /tmp/out/vn-pruebas-destroy.txt
+          terraform workspace select desarrollo
+          terraform destroy -auto-approve -no-color -var-file=$P -var-file=entornos/desarrollo.tfvars > /tmp/out/vn-dev-destroy.txt
+          cp .terraform.lock.hcl /tmp/out/infra-local.lock.hcl
+      - name: Proyectos de práctica
+        working-directory: clases/clase-05/infra-local
+        run: |
+          set -x
+          terraform workspace select desarrollo
+          for p in mercado-raices bici-barrio biblioteca-barrio; do
+            terraform apply -auto-approve -no-color -var-file=proyectos/$p.tfvars -var-file=entornos/desarrollo.tfvars > /tmp/out/proy-$p-apply.txt
+            sleep 4
+            echo "== $p" >> /tmp/out/proyectos-curl.txt
+            curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8081/ >> /tmp/out/proyectos-curl.txt
+            curl -s http://localhost:8081/ | head -c 300 >> /tmp/out/proyectos-curl.txt; echo >> /tmp/out/proyectos-curl.txt
+            terraform destroy -auto-approve -no-color -var-file=proyectos/$p.tfvars -var-file=entornos/desarrollo.tfvars > /tmp/out/proy-$p-destroy.txt
+          done
+          cat /tmp/out/proyectos-curl.txt
+      - name: AWS opcional (validate + plan con credenciales falsas)
+        working-directory: clases/clase-05/aws-opcional
+        run: |
+          set -x
+          terraform init -input=false -no-color > /tmp/out/aws-0-init.txt
+          terraform validate -no-color | tee /tmp/out/aws-validate.txt
+          cp .terraform.lock.hcl /tmp/out/aws.lock.hcl
+          cat > zz_override.tf <<'EOT'
+          provider "aws" {
+            access_key                  = "falsa"
+            secret_key                  = "falsa"
+            skip_credentials_validation = true
+            skip_requesting_account_id  = true
+            skip_metadata_api_check     = true
+          }
+          EOT
+          terraform plan -no-color -refresh=false -var responsable=tu-usuario > /tmp/out/aws-plan-crear.txt 2>&1 || true
+          cat /tmp/out/aws-plan-crear.txt | tail -20
+      - name: Copia formateada
+        if: always()
+        run: |
+          rm -f clases/clase-05/aws-opcional/zz_override.tf
+          cp -r clases/clase-05 /tmp/out/clase-05-fmt
+          find /tmp/out/clase-05-fmt -name .terraform -type d -prune -exec rm -rf {} +
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: salidas
+          path: /tmp/out

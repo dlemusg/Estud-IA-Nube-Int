@@ -1,0 +1,33 @@
+# Ejercicio 5 · Completa el módulo
+# Este es el corazón del módulo servicio-web con 8 espacios en blanco (___).
+# Cada espacio lleva UNA palabra del banco. Al terminar, compara con
+# ../../infra-local/modules/servicio-web/main.tf
+#
+# Banco de palabras:
+#   docker_image   docker_container   image_id   puerto_interno
+#   puerto_externo   variables_app   entorno   build
+
+# 1. La imagen (equivale a docker build)
+resource "___" "app" {
+  name         = "${var.nombre}:${var.version_app}"
+  keep_locally = true
+
+  ___ {
+    context = var.carpeta_app
+  }
+}
+
+# 2. El contenedor (equivale a docker run)
+resource "___" "app" {
+  # Pista: el nombre debe distinguir desarrollo de pruebas
+  name  = "${var.nombre}-${var.___}"
+  image = docker_image.app.___
+
+  ports {
+    internal = var.___   # dónde escucha la app DENTRO del contenedor
+    external = var.___   # por dónde entras TÚ desde el navegador
+  }
+
+  # Convierte el mapa de configuración en la lista "CLAVE=valor" que espera Docker
+  env = [for clave, valor in var.___ : "${clave}=${valor}"]
+}

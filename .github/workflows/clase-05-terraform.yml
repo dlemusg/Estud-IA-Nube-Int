@@ -1,0 +1,127 @@
+# Clase 5 · Terraform revisado por el pipeline
+# Cada vez que alguien cambia la carpeta clases/clase-05, GitHub:
+#   1. revisa formato y valida los tres proyectos de Terraform (job "revisar")
+#   2. calcula el plan del entorno de pruebas y lo muestra en el resumen (job "plan")
+#   3. crea un ENTORNO EFÍMERO: aplica el plan en la máquina del runner,
+#      corre las pruebas de la Clase 3 y lo destruye (job "efimero")
+# Nunca toca una nube real: el proveedor es el Docker del runner.
+
+name: Clase 5 · Terraform
+
+on:
+  push:
+    paths:
+      - "clases/clase-05/**"
+      - "clases/clase-04/villa-nube/**"
+      - ".github/workflows/clase-05-terraform.yml"
+  pull_request:
+    paths:
+      - "clases/clase-05/**"
+      - "clases/clase-04/villa-nube/**"
+      - ".github/workflows/clase-05-terraform.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Archivos de entrada del entorno que se revisa en el pipeline
+env:
+  PROYECTO: proyectos/villa-nube.tfvars
+  ENTORNO: entornos/pruebas.tfvars
+
+jobs:
+  # JOB 1 · ¿Está bien escrito?
+  revisar:
+    name: Formato y validación
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: clases/clase-05
+    steps:
+      - name: Descargar el código del repositorio
+        uses: actions/checkout@v6
+
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "~1.17.0"
+          terraform_wrapper: false
+
+      # fmt -check no cambia nada: solo falla si algún archivo no tiene el formato estándar
+      - name: Formato (terraform fmt)
+        run: terraform fmt -check -recursive -diff
+
+      - name: Validar Hola Terraform
+        working-directory: clases/clase-05/01-hola-terraform
+        run: terraform init -input=false && terraform validate
+
+      - name: Validar infra-local
+        working-directory: clases/clase-05/infra-local
+        run: terraform init -input=false && terraform validate
+
+      - name: Validar aws-opcional (sin credenciales, sin crear nada)
+        working-directory: clases/clase-05/aws-opcional
+        run: terraform init -input=false && terraform validate
+
+  # JOB 2 · ¿Qué haría?
+  plan:
+    name: Plan del entorno de pruebas
+    needs: revisar
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: clases/clase-05/infra-local
+    steps:
+      - uses: actions/checkout@v6
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "~1.17.0"
+          terraform_wrapper: false
+
+      - name: Preparar Terraform y el workspace de pruebas
+        run: terraform init -input=false && terraform workspace new pruebas
+
+      - name: Calcular el plan
+        run: terraform plan -input=false -no-color -var-file=$PROYECTO -var-file=$ENTORNO -out=pruebas.tfplan
+
+      # El plan queda en el resumen de la ejecución: se lee sin abrir el log
+      - name: Publicar el plan en el resumen
+        run: |
+          echo "### Plan del entorno de pruebas" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          terraform show -no-color pruebas.tfplan >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  # JOB 3 · ¿Funciona de verdad? Entorno efímero: se crea, se prueba y se borra
+  efimero:
+    name: Entorno efímero y prueba de humo
+    needs: plan
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: clases/clase-05/infra-local
+    steps:
+      - uses: actions/checkout@v6
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "~1.17.0"
+          terraform_wrapper: false
+
+      - name: Preparar Terraform y el workspace de pruebas
+        run: terraform init -input=false && terraform workspace new pruebas
+
+      # -auto-approve solo es aceptable aquí: el entorno vive unos minutos y no es de nadie
+      - name: Crear el entorno (apply)
+        run: terraform apply -input=false -auto-approve -var-file=$PROYECTO -var-file=$ENTORNO
+
+      - name: Prueba de humo (las pruebas de la Clase 3)
+        run: URL=$(terraform output -raw url) bash ../../clase-04/villa-nube/scripts/verificar.sh
+
+      - name: Logs del contenedor (si algo falló)
+        if: failure()
+        run: docker logs $(terraform output -raw contenedor)
+
+      # always(): se destruye aunque la prueba falle, para no dejar nada encendido
+      - name: Destruir el entorno
+        if: always()
+        run: terraform destroy -input=false -auto-approve -var-file=$PROYECTO -var-file=$ENTORNO

@@ -2,11 +2,24 @@
   "name": "Estud-IA · Nube Intermedio",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/terraform:1": {}
   },
-  "forwardPorts": [8080],
+  "forwardPorts": [
+    8080,
+    8081,
+    8082
+  ],
   "portsAttributes": {
-    "8080": { "label": "Aplicación del laboratorio" }
+    "8080": {
+      "label": "Aplicación del laboratorio"
+    },
+    "8081": {
+      "label": "Clase 5 · entorno desarrollo"
+    },
+    "8082": {
+      "label": "Clase 5 · entorno pruebas"
+    }
   },
   "postCreateCommand": "chmod +x clases/*/villa-nube/scripts/*.sh 2>/dev/null || true"
 }

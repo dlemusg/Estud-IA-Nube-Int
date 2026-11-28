@@ -1,0 +1,3 @@
+# Copia a terraform.tfvars y cambia tu usuario
+responsable = "CAMBIA-tu-usuario-de-github"
+entorno     = "desarrollo"

@@ -3,7 +3,7 @@ on:
   push:
     branches: [verificacion-clase-05]
 permissions:
-  contents: read
+  contents: write
 jobs:
   todo:
     runs-on: ubuntu-latest
@@ -100,8 +100,12 @@ jobs:
           rm -f clases/clase-05/aws-opcional/zz_override.tf
           cp -r clases/clase-05 /tmp/out/clase-05-fmt
           find /tmp/out/clase-05-fmt -name .terraform -type d -prune -exec rm -rf {} +
-      - uses: actions/upload-artifact@v6
+      - name: Subir salidas a la rama
         if: always()
-        with:
-          name: salidas
-          path: /tmp/out
+        run: |
+          git config user.name "verificacion"
+          git config user.email "verificacion@users.noreply.github.com"
+          git fetch origin verificacion-clase-05
+          git checkout -B salidas-clase-05
+          rm -rf _salidas && cp -r /tmp/out _salidas
+          git add -f _salidas && git commit -qm "Salidas de verificación" && git push -f origin salidas-clase-05

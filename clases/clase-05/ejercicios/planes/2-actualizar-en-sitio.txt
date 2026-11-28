@@ -1,0 +1,31 @@
+terraform_data.responsable: Refreshing state... [id=764d6b11-d712-deb1-9c42-533716b8e11d]
+local_file.bienvenida: Refreshing state... [id=1b4bd42ccbb7d4e21f5a38b6b039353646b0f484]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # terraform_data.responsable will be updated in-place
+  ~ resource "terraform_data" "responsable" {
+        id     = "764d6b11-d712-deb1-9c42-533716b8e11d"
+      ~ input  = {
+          ~ equipo = "Plataforma" -> "Datos"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - ciudad = "Villa Nube"
+          - equipo = "Plataforma"
+        } -> (known after apply)
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+
+Changes to Outputs:
+  ~ responsable = "Plataforma" -> (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.

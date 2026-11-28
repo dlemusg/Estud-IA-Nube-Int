@@ -3,3 +3,13 @@ __pycache__/
 *.pyc
 .venv/
 datos-locales/
+
+# Terraform: el estado y las carpetas de trabajo no se suben al repositorio
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfstate.d/
+*.tfplan
+crash.log
+# Archivos de salida del ejercicio Hola Terraform
+clases/clase-05/01-hola-terraform/salida/

@@ -1,0 +1,173 @@
+module.servicio.docker_volume.datos[0]: Refreshing state... [id=villa-nube-pruebas-datos]
+module.servicio.docker_image.app: Refreshing state... [id=sha256:388527f0f3562c9e15596e595aa8d924c1145dc0353a679033deeb1555fdae55villa-nube:1.0.0]
+module.servicio.docker_container.app: Refreshing state... [id=df1b70538ced11267513b60f4698ce17784f7f47f11073258ed632a291c3736b]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # module.servicio.docker_container.app will be destroyed
+  - resource "docker_container" "app" {
+      - attach                                      = false -> null
+      - command                                     = [
+          - "sh",
+          - "-c",
+          - "exec gunicorn --bind 0.0.0.0:${PORT} --workers 2 --access-logfile - app:app",
+        ] -> null
+      - container_read_refresh_timeout_milliseconds = 15000 -> null
+      - cpu_shares                                  = 0 -> null
+      - device_cgroup_rules                         = [] -> null
+      - dns                                         = [] -> null
+      - dns_opts                                    = [] -> null
+      - dns_search                                  = [] -> null
+      - entrypoint                                  = [] -> null
+      - env                                         = [
+          - "DIAS_VIGENCIA_DOCUMENTO=90",
+          - "ENTORNO=pruebas",
+          - "LOG_LEVEL=INFO",
+        ] -> null
+      - group_add                                   = [] -> null
+      - hostname                                    = "df1b70538ced" -> null
+      - id                                          = "df1b70538ced11267513b60f4698ce17784f7f47f11073258ed632a291c3736b" -> null
+      - image                                       = "sha256:388527f0f3562c9e15596e595aa8d924c1145dc0353a679033deeb1555fdae55" -> null
+      - init                                        = false -> null
+      - ipc_mode                                    = "private" -> null
+      - log_driver                                  = "json-file" -> null
+      - log_opts                                    = {} -> null
+      - logs                                        = false -> null
+      - max_retry_count                             = 0 -> null
+      - memory                                      = 0 -> null
+      - memory_reservation                          = 0 -> null
+      - memory_swap                                 = 0 -> null
+      - must_run                                    = true -> null
+      - name                                        = "villa-nube-pruebas" -> null
+      - network_data                                = [
+          - {
+              - gateway                   = "172.17.0.1"
+              - global_ipv6_prefix_length = 0
+              - ip_address                = "172.17.0.3"
+              - ip_prefix_length          = 16
+              - mac_address               = "32:d6:b4:d5:93:99"
+              - network_name              = "bridge"
+                # (2 unchanged attributes hidden)
+            },
+        ] -> null
+      - network_mode                                = "bridge" -> null
+      - platform                                    = "linux" -> null
+      - privileged                                  = false -> null
+      - publish_all_ports                           = false -> null
+      - read_only                                   = false -> null
+      - remove_volumes                              = true -> null
+      - restart                                     = "unless-stopped" -> null
+      - rm                                          = false -> null
+      - runtime                                     = "runc" -> null
+      - security_opts                               = [] -> null
+      - shm_size                                    = 64 -> null
+      - start                                       = true -> null
+      - stdin_open                                  = false -> null
+      - stop_timeout                                = 0 -> null
+      - storage_opts                                = {} -> null
+      - sysctls                                     = {} -> null
+      - tmpfs                                       = {} -> null
+      - tty                                         = false -> null
+      - user                                        = "tramites" -> null
+      - wait                                        = false -> null
+      - wait_timeout                                = 60 -> null
+      - working_dir                                 = "/app" -> null
+        # (5 unchanged attributes hidden)
+
+      - healthcheck {
+          - interval       = "10s" -> null
+          - retries        = 3 -> null
+          - start_interval = "0s" -> null
+          - start_period   = "10s" -> null
+          - test           = [
+              - "CMD-SHELL",
+              - "python -c \"import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:%s/salud' % os.getenv('PORT', '8080'), timeout=2)\" || exit 1",
+            ] -> null
+          - timeout        = "3s" -> null
+        }
+
+      - labels {
+          - label = "estudia.entorno" -> null
+          - value = "pruebas" -> null
+        }
+
+      - ports {
+          - external = 8082 -> null
+          - internal = 8080 -> null
+          - ip       = "0.0.0.0" -> null
+          - protocol = "tcp" -> null
+        }
+
+      - volumes {
+          - container_path  = "/data" -> null
+          - read_only       = false -> null
+          - volume_name     = "villa-nube-pruebas-datos" -> null
+            # (3 unchanged attributes hidden)
+        }
+    }
+
+  # module.servicio.docker_image.app will be destroyed
+  - resource "docker_image" "app" {
+      - id           = "sha256:388527f0f3562c9e15596e595aa8d924c1145dc0353a679033deeb1555fdae55villa-nube:1.0.0" -> null
+      - image_id     = "sha256:388527f0f3562c9e15596e595aa8d924c1145dc0353a679033deeb1555fdae55" -> null
+      - keep_locally = true -> null
+      - name         = "villa-nube:1.0.0" -> null
+      - repo_digest  = "villa-nube@sha256:388527f0f3562c9e15596e595aa8d924c1145dc0353a679033deeb1555fdae55" -> null
+
+      - build {
+          - additional_contexts = [] -> null
+          - build_args          = {
+              - "APP_VERSION" = "1.0.0"
+            } -> null
+          - cache_from          = [] -> null
+          - cache_to            = [] -> null
+          - context             = "~/estudia-nube/clases/clase-04/villa-nube" -> null
+          - cpu_period          = 0 -> null
+          - cpu_quota           = 0 -> null
+          - cpu_shares          = 0 -> null
+          - dockerfile          = "Dockerfile" -> null
+          - extra_hosts         = [] -> null
+          - force_remove        = false -> null
+          - label               = {} -> null
+          - labels              = {} -> null
+          - memory              = 0 -> null
+          - memory_swap         = 0 -> null
+          - no_cache            = false -> null
+          - pull_parent         = false -> null
+          - remove              = true -> null
+          - security_opt        = [] -> null
+          - shm_size            = 0 -> null
+          - squash              = false -> null
+          - suppress_output     = false -> null
+          - tag                 = [] -> null
+          - use_legacy_builder  = false -> null
+            # (15 unchanged attributes hidden)
+        }
+    }
+
+  # module.servicio.docker_volume.datos[0] will be destroyed
+  - resource "docker_volume" "datos" {
+      - driver      = "local" -> null
+      - driver_opts = {} -> null
+      - id          = "villa-nube-pruebas-datos" -> null
+      - mountpoint  = "/var/lib/docker/volumes/villa-nube-pruebas-datos/_data" -> null
+      - name        = "villa-nube-pruebas-datos" -> null
+    }
+
+Plan: 0 to add, 0 to change, 3 to destroy.
+
+Changes to Outputs:
+  - contenedor = "villa-nube-pruebas" -> null
+  - entorno    = "pruebas" -> null
+  - imagen     = "villa-nube:1.0.0" -> null
+  - url        = "http://localhost:8082" -> null
+  - volumen    = "villa-nube-pruebas-datos" -> null
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.

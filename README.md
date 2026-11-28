@@ -12,7 +12,8 @@ Repositorio de trabajo del curso **Capa 2 · Arquitectura en la nube, nivel inte
 | 2 | 1 | Del negocio a la infraestructura: DDD, draft de arquitectura y atributos de calidad | En clase |
 | 3 | 2 | Del draft al contenedor: Docker paso a paso | [`clases/clase-03`](clases/clase-03/README.md) |
 | 4 | 2 | Integración continua con GitHub Actions | [`clases/clase-04`](clases/clase-04/README.md) |
-| 5–6 | 3 | Despliegue, reversión e infraestructura como código | Próximamente |
+| 5 | 3 | Infraestructura como código y entornos con Terraform | [`clases/clase-05`](clases/clase-05/README.md) |
+| 6 | 3 | Actualización, salud y reversión | Próximamente |
 | 7–8 | 4 | Redes, exposición del servicio y observabilidad | Próximamente |
 | 9–10 | 5 | Auditoría, portafolio y defensa | Próximamente |
 
@@ -30,9 +31,16 @@ clases/
   clase-04/
     README.md          guía del estudiante de la Clase 4
     villa-nube/        lo de la Clase 3 + pruebas automáticas (ci/, fallas-ci/)
+  clase-05/
+    README.md          guía del estudiante de la Clase 5
+    01-hola-terraform/ primer Terraform, sin Docker ni nube
+    infra-local/       Villa Nube y los proyectos de práctica como código (Terraform + Docker)
+    ejercicios/        planes guardados, plantilla, estado de ejemplo y código de la IA
+    aws-opcional/      lo mismo en AWS, para quien tiene cuenta
+    adr/               plantilla y ejemplo de registro de decisiones
 .github/workflows/     los workflows de GitHub Actions (Clase 4 en adelante)
 proyectos/             proyectos de práctica para quien no tiene uno propio
-.devcontainer/         entorno de GitHub Codespaces para todo el curso
+.devcontainer/         entorno de GitHub Codespaces para todo el curso (Docker y Terraform)
 ```
 
 Cada carpeta de clase es **completa y funciona sola**: si te atrasas o faltaste, entra a la carpeta de la clase y arranca desde ahí. El laboratorio de una clase parte del de la anterior y le agrega una capa (contenedor, integración continua, despliegue, infraestructura como código, red y observación).

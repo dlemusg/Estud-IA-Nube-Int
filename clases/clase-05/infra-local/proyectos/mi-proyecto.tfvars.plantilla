@@ -1,0 +1,17 @@
+# PLANTILLA para tu proyecto.
+# 1. Copia este archivo:  cp proyectos/mi-proyecto.tfvars.plantilla proyectos/mi-proyecto.tfvars
+# 2. Cambia cada valor marcado con CAMBIA.
+# 3. Prueba:  terraform plan -var-file=proyectos/mi-proyecto.tfvars -var-file=entornos/desarrollo.tfvars
+
+nombre         = "mi-proyecto"            # CAMBIA: minúsculas y guiones
+carpeta_app    = "../../../../mi-proyecto" # CAMBIA: carpeta con tu Dockerfile, contada desde infra-local
+# (en este ejemplo, el curso está en ~/estudia-nube y tu proyecto en ~/mi-proyecto)
+version_app    = "1.0.0"
+puerto_interno = 8080                     # CAMBIA: el puerto de EXPOSE en tu Dockerfile
+ruta_datos     = ""                       # CAMBIA si tu app guarda datos en una carpeta (ej. "/data")
+
+# CAMBIA: la configuración de tu app (las variables que lee con getenv o process.env).
+# Nunca pongas aquí contraseñas reales: este archivo se sube a GitHub.
+variables_app = {
+  # EJEMPLO = "valor"
+}

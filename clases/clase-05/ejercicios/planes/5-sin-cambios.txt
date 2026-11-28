@@ -1,0 +1,8 @@
+module.servicio.docker_volume.datos[0]: Refreshing state... [id=villa-nube-desarrollo-datos]
+module.servicio.docker_image.app: Refreshing state... [id=sha256:fe0060c7919de71b9ae8ea67f2641e04df319063bfea75fc7baeb63cd4a35d8dvilla-nube:1.0.0]
+module.servicio.docker_container.app: Refreshing state... [id=ad8b52b7bae59b1e8e2c10f08948d3268440517854e18eab33695e01159b07db]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.

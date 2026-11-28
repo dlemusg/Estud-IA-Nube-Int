@@ -1,0 +1,44 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # local_file.bienvenida will be created
+  + resource "local_file" "bienvenida" {
+      + content              = <<-EOT
+            Bienvenida a la API de Trámites de Villa Nube.
+        EOT
+      + content_base64sha256 = (known after apply)
+      + content_base64sha512 = (known after apply)
+      + content_md5          = (known after apply)
+      + content_sha1         = (known after apply)
+      + content_sha256       = (known after apply)
+      + content_sha512       = (known after apply)
+      + directory_permission = "0777"
+      + file_permission      = "0777"
+      + filename             = "./salida/bienvenida.txt"
+      + id                   = (known after apply)
+    }
+
+  # terraform_data.responsable will be created
+  + resource "terraform_data" "responsable" {
+      + id     = (known after apply)
+      + input  = {
+          + ciudad = "Villa Nube"
+          + equipo = "Plataforma"
+        }
+      + output = (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + archivo     = "./salida/bienvenida.txt"
+  + responsable = (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
